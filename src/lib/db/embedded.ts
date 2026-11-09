@@ -13,6 +13,8 @@ import { getDb, isEmbedded, schema } from "./index";
  */
 export async function initEmbedded() {
   if (!isEmbedded()) return;
+  // On Vercel the embedded database cannot persist; the UI shows a "connect a database" notice instead of failing every request.
+  if (process.env.VERCEL) { console.warn("[nsos] No DATABASE_URL on Vercel - connect a Postgres database to this project."); return; }
   const db = getDb();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the migrator wants the pglite-typed db; same object at runtime
   await migrate(db as any, { migrationsFolder: path.join(process.cwd(), "drizzle") });

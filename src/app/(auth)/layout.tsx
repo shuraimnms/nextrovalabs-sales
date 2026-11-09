@@ -1,4 +1,8 @@
 import { Sparkles } from "lucide-react";
+import { isEmbedded } from "@/lib/db";
+
+// On Vercel there is no persistent disk, so a PostgreSQL DATABASE_URL is required.
+const needsDatabase = () => isEmbedded() && !!process.env.VERCEL;
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,7 +13,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           <span className="grid size-10 place-items-center rounded-xl bg-[image:var(--grad)] text-white shadow-soft"><Sparkles className="size-5" aria-hidden /></span>
           <div className="leading-tight"><p className="text-lg font-semibold tracking-tight">Nextrova Sales OS</p><p className="text-xs text-muted-foreground">Nextrova Labs · internal use only</p></div>
         </div>
-        {children}
+        {needsDatabase() ? (
+          <div role="alert" className="rounded-xl border border-warning bg-warning-bg p-5 text-sm">
+            <p className="font-medium">Database not connected yet</p>
+            <p className="mt-1">This deployment is live but has no PostgreSQL database. In Vercel, open this project, go to <strong>Storage</strong>, add a Postgres database (for example Neon) and connect it to this project, then redeploy. Sign-in will work as soon as it is connected.</p>
+          </div>
+        ) : children}
       </div>
     </main>
   );
