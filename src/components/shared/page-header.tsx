@@ -1,0 +1,15 @@
+export function PageHeader({ title, description, actions }: { title: string; description?: string; actions?: React.ReactNode }) {
+  return (
+    <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+      <div className="min-w-0">
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h1>
+        {description && <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{description}</p>}
+      </div>
+      {actions}
+    </div>
+  );
+}
+export function ApprovalBadge({ approval }: { approval: string }) {
+  if (approval === "APPROVED") return null;
+  return <span className="inline-flex items-center rounded-full bg-warning-bg px-2.5 py-0.5 text-xs font-medium text-warning" title="This company-specific point has not been verified. Confirm with your manager before quoting it.">Pending admin confirmation</span>;
+}

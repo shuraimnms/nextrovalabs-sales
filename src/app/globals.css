@@ -1,26 +1,116 @@
 @import "tailwindcss";
 
+/* Nextrova Sales OS design tokens — midnight navy / violet / indigo / lavender / slate. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f7fb;
+  --foreground: #0f1226;
+  --card: #ffffff;
+  --card-foreground: #0f1226;
+  --muted: #eef0f7;
+  --muted-foreground: #5a6078;
+  --border: #e1e4ef;
+  --input: #d5d9e8;
+  --primary: #5b3df5;
+  --primary-hover: #4b2fe0;
+  --primary-foreground: #ffffff;
+  --accent: #efeaff;
+  --accent-foreground: #3b24b8;
+  --ring: #7c5cff;
+  --success: #0f7b4f;
+  --success-bg: #e3f6ec;
+  --warning: #8a5300;
+  --warning-bg: #fff2d9;
+  --danger: #b42318;
+  --danger-bg: #fde8e6;
+  --danger-solid: #b42318;
+  --sidebar: #0d1030;
+  --sidebar-foreground: #c9cdea;
+  --sidebar-active: #1d2160;
+  --shadow-soft: 0 1px 2px rgb(15 18 38 / 0.05), 0 8px 24px -12px rgb(40 30 120 / 0.18);
+  --grad: linear-gradient(135deg, #5b3df5 0%, #7c5cff 55%, #a78bfa 100%);
+}
+
+.dark {
+  --background: #090b1f;
+  --foreground: #eceefb;
+  --card: #10132e;
+  --card-foreground: #eceefb;
+  --muted: #171a3a;
+  --muted-foreground: #a2a8c9;
+  --border: #232750;
+  --input: #2d3263;
+  --primary: #8b6cff;
+  --primary-hover: #a085ff;
+  --primary-foreground: #0b0d24;
+  --accent: #1f1b4d;
+  --accent-foreground: #cfc3ff;
+  --ring: #a085ff;
+  --success: #5fd7a1;
+  --success-bg: #0e2a20;
+  --warning: #f3c46b;
+  --warning-bg: #2d2208;
+  --danger: #ff8f84;
+  --danger-bg: #331412;
+  --danger-solid: #b42318;
+  --sidebar: #060820;
+  --sidebar-foreground: #aeb4dc;
+  --sidebar-active: #171b52;
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.4), 0 10px 30px -14px rgb(0 0 0 / 0.7);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-bg: var(--success-bg);
+  --color-warning: var(--warning);
+  --color-warning-bg: var(--warning-bg);
+  --color-danger: var(--danger);
+  --color-danger-bg: var(--danger-bg);
+  --color-danger-solid: var(--danger-solid);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-active: var(--sidebar-active);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --radius-xl: 0.9rem;
+  --shadow-soft: var(--shadow-soft);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html { color-scheme: light dark; }
+html.dark { color-scheme: dark; }
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
+
+:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: 6px; }
+
+/* Restrained motion; fully disabled when the user (or app setting) asks for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+}
+
+@keyframes shimmer { 100% { transform: translateX(100%); } }
+.skeleton { position: relative; overflow: hidden; background: var(--muted); border-radius: 0.5rem; }
+.skeleton::after { content: ""; position: absolute; inset: 0; transform: translateX(-100%); background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--foreground) 8%, transparent), transparent); animation: shimmer 1.4s infinite; }
+
+.script-text { white-space: pre-wrap; line-height: 1.65; }
+mark.hl { background: color-mix(in srgb, var(--primary) 22%, transparent); color: inherit; border-radius: 3px; padding: 0 1px; }

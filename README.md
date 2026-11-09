@@ -1,36 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nextrova Sales OS
 
-## Getting Started
+Private, internal sales-enablement and training platform for **Nextrova Labs** employees
+(target: `https://sales.nextrovalabs.in`). It helps employees *talk to customers better* — live-call scripts,
+objection handling, a training academy, roleplay practice, WhatsApp templates and a knowledge base — and gives admins a
+CMS and analytics for that content.
 
-First, run the development server:
+> **Deliberately not included:** lead capture, CRM, Meta Ads integration, lead assignment, customer database,
+> pipeline, customer contact storage, auto-calling and customer payment collection. The system stores employees,
+> content, learning progress and audit logs only — never customer data.
+
+## What is in it
+
+| Area | Notes |
+|---|---|
+| Employee dashboard | Progress, favourites, recent activity, announcements — computed from real rows |
+| **Live Call Companion** | Pick service + call stage + what the customer says → recommended script, alternatives, things to avoid. Keyboard driven (A/F/←/→/Esc), focus mode, text-size control |
+| Script library | 103 Hinglish scripts, versioned, searchable, favouritable, copy-to-clipboard |
+| Objection library | 66 objections × 4 response variants (recommended / short / detailed / alternative) |
+| Sales Academy | 12 courses · 60 lessons · quizzes (graded server-side) · certificates issued only after all lessons are done **and** the quiz is passed |
+| Roleplay simulator | 7 customer personalities × 4 project types × 3 difficulties, 6 scoring criteria. Rule-based by default and clearly labelled; optional AI replies from the server only |
+| WhatsApp templates | 36 templates (English + Hinglish) in 12 categories |
+| Knowledge base | 58 articles in 13 sections |
+| Global search | `Ctrl/Cmd + K` over scripts, objections, templates, articles, courses |
+| Admin CMS | Scripts (version history + restore), objections, templates, articles, courses/lessons/quiz questions, announcements, employees, analytics, audit log (Super Admin) |
+| Themes / a11y | Light, dark, system; responsive; axe-checked against WCAG 2.2 AA |
+
+## Stack
+
+Next.js 16 (App Router, `proxy.ts`) · React 19 · strict TypeScript · Tailwind CSS v4 · Radix primitives · cmdk · Motion ·
+Recharts · Zod · **Drizzle ORM** + PostgreSQL (Neon) · Argon2id · Vitest + React Testing Library · Playwright + axe-core.
+
+Layering: `src/app` (routes + server actions) → `src/services` (business rules, all take a `DB`) → `src/lib/db` (Drizzle schema).
+Services are tested directly against an in-memory Postgres (PGlite), so business rules are verified without a network database.
+
+## Quick start
 
 ```bash
+npm ci
+cp .env.example .env.local          # fill DATABASE_URL, DIRECT_URL, APP_URL
+npm run db:migrate                  # apply drizzle/0000_init.sql
+npm run seed                        # idempotent: loads all content
+BOOTSTRAP_EMAIL=you@nextrovalabs.in BOOTSTRAP_NAME="Your Name" \
+BOOTSTRAP_PASSWORD='choose-a-strong-one' npm run bootstrap:admin
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Full instructions, including deployment to Vercel + Neon and DNS: **[docs/SETUP.md](docs/SETUP.md)**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Purpose |
+|---|---|
+| `npm run dev` / `build` / `start` | Next.js |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
+| `npm test` | Vitest — unit, component (RTL) and DB-backed integration tests |
+| `npm run test:e2e` | Playwright E2E + axe (needs a running app and a *test* database) |
+| `npm run db:generate` / `db:migrate` | Drizzle migrations |
+| `npm run seed` | Load/refresh content (never overwrites admin edits for existing slugs) |
+| `npm run bootstrap:admin` | Create the first Super Admin (works exactly once) |
+| `npm run db:local` | Local PGlite socket server for development without installing Postgres |
 
-## Learn More
+## Documentation
 
-To learn more about Next.js, take a look at the following resources:
+- [Setup & deployment guide](docs/SETUP.md)
+- [Admin guide](docs/ADMIN_GUIDE.md)
+- [Employee guide](docs/EMPLOYEE_GUIDE.md)
+- [Security notes](docs/SECURITY.md)
+- [Test results](docs/TEST_RESULTS.md)
+- [Open items needing a human decision](docs/OPEN_ITEMS.md)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Content integrity
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Anything that states a company fact (prices, timelines, payment terms, policies, guarantees, team size, clients) is
+**not invented**. Where the source material did not supply a verified fact, the item is flagged
+`PENDING_ADMIN_CONFIRMATION` and shown with a "Pending confirmation" badge until an admin edits and approves it.
+See [OPEN_ITEMS](docs/OPEN_ITEMS.md).
