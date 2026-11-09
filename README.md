@@ -28,12 +28,21 @@ CMS and analytics for that content.
 ## Stack
 
 Next.js 16 (App Router, `proxy.ts`) · React 19 · strict TypeScript · Tailwind CSS v4 · Radix primitives · cmdk · Motion ·
-Recharts · Zod · **Drizzle ORM** + PostgreSQL (Neon) · Argon2id · Vitest + React Testing Library · Playwright + axe-core.
+Recharts · Zod · **Drizzle ORM** + PostgreSQL (built-in PGlite by default, or external such as Neon) · Argon2id · Vitest + React Testing Library · Playwright + axe-core.
 
 Layering: `src/app` (routes + server actions) → `src/services` (business rules, all take a `DB`) → `src/lib/db` (Drizzle schema).
 Services are tested directly against an in-memory Postgres (PGlite), so business rules are verified without a network database.
 
-## Quick start
+## Quick start (built-in database, nothing else to install)
+
+```bash
+npm ci && npm run build
+BOOTSTRAP_EMAIL=you@nextrovalabs.in BOOTSTRAP_NAME="Your Name" BOOTSTRAP_PASSWORD='choose-a-strong-one' npm start
+```
+With no `DATABASE_URL`, the app runs its own embedded PostgreSQL, stores data in `./.data/db`, loads all content and creates your admin on first boot.
+It needs a persistent disk (your computer or a VPS), not Vercel serverless. Use `DATABASE_URL` to use an external PostgreSQL instead.
+
+## Quick start (external PostgreSQL)
 
 ```bash
 npm ci

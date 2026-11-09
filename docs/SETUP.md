@@ -22,6 +22,26 @@ See `.env.example`. Never commit real values.
 | `AI_PROVIDER` | no | `none` (default) or `anthropic` |
 | `ANTHROPIC_API_KEY`, `AI_MODEL` | with `anthropic` | Used server-side only; never sent to the browser |
 
+## 2b. Built-in database mode (no external server) — default
+
+If `DATABASE_URL` is **not set**, the app runs its own PostgreSQL (PGlite, in-process) and keeps its files in `DATA_DIR`
+(default `./.data/db`). On first boot it applies the migrations, loads all default content, and creates the first Super Admin
+from `BOOTSTRAP_EMAIL`, `BOOTSTRAP_NAME`, `BOOTSTRAP_PASSWORD` (then remove the password from the environment).
+
+```bash
+npm ci && npm run build
+BOOTSTRAP_EMAIL=you@nextrovalabs.in BOOTSTRAP_NAME="Your Name" BOOTSTRAP_PASSWORD='choose-a-strong-one' \
+APP_URL=http://localhost:3000 npm start
+```
+
+Rules for this mode:
+- **Run exactly one server process** against a `DATA_DIR` (the embedded database is single-process).
+- It needs a **persistent disk**: run it on your own computer or a VPS (e.g. with PM2/systemd behind nginx). It does **not** work on Vercel
+  serverless (no persistent disk) — the app refuses to start there instead of silently losing data.
+- **Back up** by stopping the app and copying `DATA_DIR`.
+- To move to a hosted Postgres later, set `DATABASE_URL` (section 4); the schema and migrations are identical.
+- Verified: boot → seed → bootstrap admin → sign in → create employee → restart → data intact.
+
 ## 3. Local development
 
 ```bash
@@ -44,7 +64,7 @@ npm run dev
 `bootstrap:admin` creates the first Super Admin and then refuses to run again once any Super Admin exists.
 The password policy is: ≥ 10 characters with upper case, lower case and a digit.
 
-## 4. Deploying to Vercel + Neon
+## 4. Deploying to Vercel + external PostgreSQL (optional)
 
 1. **Neon:** create a project, copy the pooled and direct connection strings.
 2. **Migrate and seed from a trusted machine** (not at request time):

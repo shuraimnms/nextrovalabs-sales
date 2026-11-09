@@ -20,7 +20,7 @@ const csp = [
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
-  serverExternalPackages: ["argon2", "pg"],
+  serverExternalPackages: ["argon2", "pg", "@electric-sql/pglite"],
   async headers() {
     return [
       {

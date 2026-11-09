@@ -9,4 +9,5 @@
 5. **Auth architecture:** a custom, database-backed session system (with RBAC, lockout, reset flow) was used instead of Auth.js. Both are reasonable; this keeps credentials and audit in one Postgres and is fully tested.
 6. **ORM:** Drizzle instead of Prisma (the Prisma engine could not be installed in the build environment; agreed during the build).
 7. **MFA** is not implemented (see SECURITY.md).
-8. **Production deployment and DNS** — see TEST_RESULTS.md / final report for what was and was not performed.
+8. **Hosting model.** With the built-in database the app must run on one Node host with a persistent disk (your computer or the OVH VPS). Vercel needs an external PostgreSQL.
+9. **Production deployment and DNS** — not performed; see TEST_RESULTS.md.
